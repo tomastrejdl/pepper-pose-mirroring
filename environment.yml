@@ -1,0 +1,11 @@
+name: pepper_env
+channels:
+  - defaults
+dependencies:
+  - python=3.7
+  - pip
+  - pip:
+    - opencv-python
+    - mediapipe
+    - pip
+    
