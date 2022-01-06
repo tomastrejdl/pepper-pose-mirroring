@@ -26,3 +26,9 @@ Doporučené nástroje, knihovny apod.: Python, naoqi API, existující již nat
 ## Run Mediapipe Demo
 
 `python3 ./demo/mediapipe-holistic-webcam-demo.py`
+
+
+## Implementation
+
+Calculate angle between two edges
+- https://stackoverflow.com/questions/69154914/calculating-angles-of-body-skeleton-in-video-using-openpose
