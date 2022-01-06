@@ -1,2 +1,6 @@
-opencv-python==4.4.0.42
-
+numpy
+matplotlib
+opencv-python
+scipy
+scikit-image
+tqdm
