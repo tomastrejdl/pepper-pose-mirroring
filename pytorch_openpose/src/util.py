@@ -1,3 +1,4 @@
+from queue import Empty
 import numpy as np
 import math
 import cv2
@@ -8,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 
+from src import angle_detection
 
 
 def calculate_point_distance(x0, y0, x1, y1):
@@ -126,8 +128,9 @@ def draw_bodypose(canvas, candidate, subset):
             cv2.putText(canvas, str(i), (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
             body_peaks.append([int(x), int(y)])
             
+    body_angles = []
     if len(body_peaks) > 0:
-        draw_body_angles(canvas, body_peaks)
+        body_angles = angle_detection.get_body_angles(canvas, body_peaks)
 
     for i in range(17):
         for n in range(len(subset)):
@@ -146,7 +149,7 @@ def draw_bodypose(canvas, candidate, subset):
             canvas = cv2.addWeighted(canvas, 0.4, cur_canvas, 0.6, 0)
     # plt.imsave("preview.jpg", canvas[:, :, [2, 1, 0]])
     # plt.imshow(canvas[:, :, [2, 1, 0]])
-    return canvas
+    return canvas, body_angles
 
 def draw_handpose(canvas, all_hand_peaks, show_number=False):
     edges = [[0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8], [0, 9], [9, 10], \
@@ -162,29 +165,35 @@ def draw_handpose(canvas, all_hand_peaks, show_number=False):
 
     width, height = ax.figure.get_size_inches() * ax.figure.get_dpi()
 
+    finger_angles = []
     for peaks in all_hand_peaks:
-        # print("Peaks", peaks)
         for ie, e in enumerate(edges):
             if np.sum(np.all(peaks[e], axis=1)==0)==0:
                 x1, y1 = peaks[e[0]]
                 x2, y2 = peaks[e[1]]
                 ax.plot([x1, x2], [y1, y2], color=matplotlib.colors.hsv_to_rgb([ie/float(len(edges)), 1.0, 1.0]))
             
-                # Draw angles between fingers
-                for ie2, e2 in enumerate(edges):
-                    if(e != e2):
-                        angle = get_angle(e, e2, edges, peaks)
-                        if angle != -1 and not math.isnan(angle):
-                            ax.text(x1, y1, str(int(angle)))
+                finger_angles.append(angle_detection.get_finger_angle(e, peaks, edges, ax, x1, y1, True))
 
         for i, keyponit in enumerate(peaks):
             x, y = keyponit
             ax.plot(x, y, 'r.')
             if show_number:
                 ax.text(x, y, str(i))
+
+    angles = [a for a in finger_angles if not a in [-1]]
+    if len(angles) > 0 and sum(angles)/len(angles) > 150:
+        is_left_hand_open = True
+        is_right_hand_open = True
+    else:
+        is_left_hand_open = False
+        is_right_hand_open = False
+    print()
+    print('------------------------------------------------------------------------------------')
+    
     bg.draw()
     canvas = np.fromstring(bg.tostring_rgb(), dtype='uint8').reshape(int(height), int(width), 3)
-    return canvas
+    return canvas, is_left_hand_open, is_right_hand_open
 
 # image drawed by opencv is not good.
 def draw_handpose_by_opencv(canvas, peaks, show_number=False):
@@ -278,46 +287,3 @@ def npmax(array):
     i = arrayvalue.argmax()
     j = arrayindex[i]
     return i, j
-
-# DraW angles between body parts
-def draw_body_angles(canvas, body_peaks):
-    body_edges = [[0, 1], [1, 2], [1, 5], [2, 3], [3, 4], [5, 6], [6, 7]]
-    for ie, e in enumerate(body_edges):
-        for ie2, e2 in enumerate(body_edges):
-            if e == e2 or ie2 <= ie:
-                continue
-            angle = get_angle(e, e2, body_edges, np.array(body_peaks))
-            if len(set(e).intersection(set(e2))) == 0:
-                continue
-            set_e = set(e)
-            set_e2 = set(e2)
-            mid_point = set_e.intersection(set_e2).pop()
-            x, y = body_peaks[mid_point]
-            print("Midpoint: ", mid_point, " with edges: ", e, " x ", e2, " has angle ", angle, " degrees")
-            if angle != -1:
-                cv2.putText(canvas, str(int(angle)), (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 2)
-
-def get_angle(edge1,  edge2, edges, peaks):
-    # print("Getting angle betwen:", edge1, " and ", edge2)
-
-    if sorted(edge1) not in edges:
-        return -1
-    if sorted(edge2) not in edges:
-        return -1
-    edge1 = set(edge1)
-    edge2 = set(edge2)
-
-    if len(edge1.intersection(edge2)) == 0 or len(edge1.intersection(edge2)) == 2:
-        return -1
-    mid_point = edge1.intersection(edge2).pop()
-
-    a = (edge1-edge2).pop()
-    b = (edge2-edge1).pop()
-    v1 = peaks[mid_point]-peaks[a]
-    v2 = peaks[mid_point]-peaks[b]
-
-    angle = (math.degrees(np.arccos(np.dot(v1,v2)
-                                    /(np.linalg.norm(v1)*np.linalg.norm(v2)))))
-    
-    # print("Angle betwen:", edge1, " and ", edge2, " is ", angle, " degrees")
-    return angle    

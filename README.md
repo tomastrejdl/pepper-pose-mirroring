@@ -32,3 +32,16 @@ Doporučené nástroje, knihovny apod.: Python, naoqi API, existující již nat
 
 Calculate angle between two edges
 - https://stackoverflow.com/questions/69154914/calculating-angles-of-body-skeleton-in-video-using-openpose
+
+Pepper Joints Documentation
+- http://doc.aldebaran.com/2-0/family/juliette_technical/joints_juliette.html
+
+### Joints we will be controlling
+
+- Shoulder Roll - Left and Right
+- Elbow Roll - Left and Right
+- Hand - Open / Close
+
+![](http://doc.aldebaran.com/2-0/_images/juliet_joints.png)
+![](http://doc.aldebaran.com/2-0/_images/joint_right_arm.png)
+![](http://doc.aldebaran.com/2-0/_images/joint_left_arm.png)
