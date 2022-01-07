@@ -12,11 +12,12 @@ def get_body_angles(canvas, body_peaks, draw = True):
         [[5, 6], [6, 7]],
     ]
 
+    body_peaks_as_array = np.array(body_peaks)
     for e, e2 in body_edge_pairs:
-        angle = get_angle(e, e2, np.array(body_peaks))
+        angle = get_angle(e, e2, body_peaks_as_array)
 
         if angle != -1:
-            mid_point =  set(e).intersection( set(e2)).pop()
+            mid_point = set(e).intersection(set(e2)).pop()
             x, y = body_peaks[mid_point]
             # print("Midpoint: ", mid_point, " with edges: ", e, " x ", e2, " has angle ", str(int(angle)), " deg")
             angles.append(angle)

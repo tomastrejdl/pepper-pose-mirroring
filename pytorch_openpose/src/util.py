@@ -12,6 +12,41 @@ import cv2
 from src import angle_detection
 
 
+class BufferlessVideoCapture:
+    def __init__(self, name):
+        self.cap = cv2.VideoCapture(name)
+        self.cap.set(3, 1000)
+        self.cap.set(4, 1000)
+        self.queue = queue.Queue()
+        self.is_running = True
+        t = threading.Thread(target=self.read_nonstop)
+        t.daemon = True
+        t.start()
+
+    def read_nonstop(self):
+        while self.is_running:
+            ret, img = self.cap.read()
+            #img = rescale_frame(img, percent=20)
+            if not ret:
+                print("ERROR: Reading video capture failed")
+                self.is_running = False
+                break
+
+            if not self.queue.empty():
+                try:
+                    self.queue.get_nowait()
+                except queue.Empty:
+                    pass
+
+            self.queue.put(img)
+
+    def read(self):
+        return self.queue.get()
+
+    def release(self):
+        self.is_running = False
+        self.cap.release()
+
 def calculate_point_distance(x0, y0, x1, y1):
     return math.sqrt((x1-x0)**2+(y1-y0)**2)
 
