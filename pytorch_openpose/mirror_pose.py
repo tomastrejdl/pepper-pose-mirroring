@@ -12,26 +12,20 @@ from pepper.robot import Pepper
 body_estimation = Body('model/body_pose_model.pth')
 hand_estimation = Hand('model/hand_pose_model.pth')
 
-def rescale_frame(frame, percent=75):
-    width = int(frame.shape[1] * percent/ 100)
-    height = int(frame.shape[0] * percent/ 100)
-    dim = (width, height)
-    return cv2.resize(frame, dim, interpolation =cv2.INTER_AREA)
-
 # Initialize Pepper
 ip_address = "10.37.1.249"
 port = 9559
 
 robot = Pepper(ip_address, port)
-# robot.autonomous_life_off()
+robot.autonomous_life_off()
 robot.stand()
 
 # Subscribe to camera, 640x480, 30 FPS
 robot.subscribe_camera("camera_top", 2, 30)
 
 frame_number = 1
-
 start = time.time()
+
 while True:
     oriImg = robot.get_camera_frame(show=False)
     candidate, subset = body_estimation(oriImg)
@@ -40,13 +34,13 @@ while True:
 
     robot.move_joint_by_angle(["LElbowYaw", "RElbowYaw"], [math.radians(-110), math.radians(110)], 0.4)
 
-    # Call PepperController to move joints
-    body_angles[0] -= 90
-    body_angles[2] -= 90
-    body_angles[2] *= -1
-    body_angles[1] = -(180 - body_angles[1])
+    # Offset joints
+    body_angles[0] = body_angles[0] - 90
+    body_angles[1] = - (180 - body_angles[1])
+    body_angles[2] = - (body_angles[2] - 90)
     body_angles[3] = 180 - body_angles[3]
-    print("Moving joints [LShoulderRoll, LElbowRoll, RShoulderRoll, RElbowRoll]: ", body_angles)
+
+    # Call PepperController to move joints
     body_angles_in_radians = [math.radians(x) for x in body_angles]
     robot.move_joint_by_angle(["LShoulderRoll", "LElbowRoll", "RShoulderRoll", "RElbowRoll"], body_angles_in_radians, 0.4)
     print("Moving joints [LShoulderRoll, LElbowRoll, RShoulderRoll, RElbowRoll]: ", body_angles_in_radians)

@@ -19,7 +19,6 @@ def get_body_angles(canvas, body_peaks, draw = True):
         if angle != -1:
             mid_point = set(e).intersection(set(e2)).pop()
             x, y = body_peaks[mid_point]
-            # print("Midpoint: ", mid_point, " with edges: ", e, " x ", e2, " has angle ", str(int(angle)), " deg")
             angles.append(angle)
             if draw:
                 cv2.putText(canvas, str(int(angle)) + "deg", (int(x)-20, int(y)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
