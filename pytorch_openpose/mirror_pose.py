@@ -41,8 +41,10 @@ while True:
     # Call PepperController to move joints
     body_angles[0] -= 90
     body_angles[2] -= 90
+    body_angles[2] *= -1
     body_angles[1] = -(180 - body_angles[1])
-    body_angles[3] = -(180 - body_angles[1])
+    body_angles[3] = 180 - body_angles[3]
+    print("Moving joints [LShoulderRoll, LElbowRoll, RShoulderRoll, RElbowRoll]: ", body_angles)
     body_angles_in_radians = [math.radians(x) for x in body_angles]
     robot.move_joint_by_angle(["LShoulderRoll", "LElbowRoll", "RShoulderRoll", "RElbowRoll"], body_angles_in_radians, 0.4)
     print("Moving joints [LShoulderRoll, LElbowRoll, RShoulderRoll, RElbowRoll]: ", body_angles_in_radians)
