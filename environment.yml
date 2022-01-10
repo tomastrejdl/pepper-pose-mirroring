@@ -2,10 +2,12 @@ name: pepper_env
 channels:
   - defaults
 dependencies:
-  - python=3.7
+  - python=3.5.6
   - pip
   - pip:
+    - numpy
+    - matplotlib
     - opencv-python
-    - mediapipe
-    - pip
-    
+    - scipy
+    - scikit-image
+    - tqdm

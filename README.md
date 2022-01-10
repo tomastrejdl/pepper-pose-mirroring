@@ -1,5 +1,8 @@
-# pepper-pose-mirroring
-Semester project for KSY (Kognitive systems) @ FEL CTU 2021
+# Pepper Pose Mirroring
+
+Semester project for KSY (Kognitive systems) @ FEL CTU 2021/2022
+
+Authors: Tomáš Trejdl <trejdtom@fel.cvut.cz>, Vojtěch Tilhon <tilhovoj@fel.cvut.cz>
 
 # Zadání
 Vytvořte modul, který robotovi umožní kopírovat pohyby rukou demonstrované člověkem
@@ -10,28 +13,43 @@ Doporučené nástroje, knihovny apod.: Python, naoqi API, existující již nat
 
 ## Prerequisites
 
-- python
+- python 3.5.6
 - [conda](https://conda.io)
 
 ## Installation
 
-`git clone https://github.com/tomastrejdl/pepper-pose-mirroring.git`
+```sh
+git clone https://github.com/tomastrejdl/pepper-pose-mirroring.git
 
-`cd pepper-pose-mirroring`
+cd pepper-pose-mirroring
 
-`conda env create -f environment.yml`
+# Clone the Pepper-Controller repo
+git clone https://github.com/incognite-lab/Pepper-Controller.git
 
-`conda activate pepper_env`
+# Add Pepper-Controller to PYTHONPATH
+export PYTHONPATH=$PYTHONPATH:/path/to/Pepper-Controller/directory
+```
 
-## Run Mediapipe Demo
+Download [model files](https://github.com/Hzzone/pytorch-openpose#download-the-models) and put them in the `/pytorch-openpose/model` directory
 
-`python3 ./demo/mediapipe-holistic-webcam-demo.py`
+```sh
+conda env create -f environment.yml
+
+conda activate pepper_env
+```
+
+## Run 
+
+Update Pepper URL in `/pytorch-openpose/mirror_pose.py`
+
+```sh
+cd pytorch-openpose
+
+python ./mirror_pose.py
+```
 
 
 ## Implementation
-
-Calculate angle between two edges
-- https://stackoverflow.com/questions/69154914/calculating-angles-of-body-skeleton-in-video-using-openpose
 
 Pepper Joints Documentation
 - http://doc.aldebaran.com/2-0/family/juliette_technical/joints_juliette.html
