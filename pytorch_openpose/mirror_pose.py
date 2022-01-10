@@ -19,7 +19,7 @@ def rescale_frame(frame, percent=75):
     return cv2.resize(frame, dim, interpolation =cv2.INTER_AREA)
 
 # Initialize Pepper
-ip_address = "10.37.1.216"
+ip_address = "10.37.1.249"
 port = 9559
 
 robot = Pepper(ip_address, port)
@@ -39,7 +39,8 @@ while True:
     canvas, body_angles = util.draw_bodypose(canvas, candidate, subset)
 
     # Call PepperController to move joints
-    robot.move_joint_by_angle(["LShoulderRoll", "LElbowRoll", "RShoulderRoll", "RElbowRoll"], math.radians(body_angles), 0.4)
+    body_angles_in_radians = [math.radians(x) for x in body_angles]
+    robot.move_joint_by_angle(["LShoulderRoll", "LElbowRoll", "RShoulderRoll", "RElbowRoll"], body_angles_in_radians, 0.4)
     print("Moving joints [LShoulderRoll, LElbowRoll, RShoulderRoll, RElbowRoll]: ", body_angles)
 
     hands_list = util.handDetect(candidate, subset, oriImg)
@@ -68,6 +69,6 @@ while True:
         break
 
 robot.unsubscribe_camera()
-robot.autonomous_life_on()
+# robot.autonomous_life_on()
 
 cv2.destroyAllWindows()
