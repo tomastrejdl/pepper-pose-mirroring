@@ -1,4 +1,4 @@
-import copy, queue, threading, time
+import copy, queue, threading, time, math
 import cv2
 import numpy as np
 
@@ -39,7 +39,7 @@ while True:
     canvas, body_angles = util.draw_bodypose(canvas, candidate, subset)
 
     # Call PepperController to move joints
-    robot.move_joint_by_angle(["LShoulderRoll", "LElbowRoll", "RShoulderRoll", "RElbowRoll"], body_angles, 0.4)
+    robot.move_joint_by_angle(["LShoulderRoll", "LElbowRoll", "RShoulderRoll", "RElbowRoll"], math.radians(body_angles), 0.4)
     print("Moving joints [LShoulderRoll, LElbowRoll, RShoulderRoll, RElbowRoll]: ", body_angles)
 
     hands_list = util.handDetect(candidate, subset, oriImg)
@@ -54,8 +54,8 @@ while True:
     canvas, is_left_hand_open, is_right_hand_open = util.draw_handpose(canvas, all_hand_peaks, False)
 
     # Call PepperContoller to open/close hand
-    robot.hand("left", !is_left_hand_open)
-    robot.hand("right", !is_right_hand_open)
+    robot.hand("left", not is_left_hand_open)
+    robot.hand("right", not is_right_hand_open)
     print("Setting left hand to be ",  "open" if is_left_hand_open else "closed")
     print("Setting right hand to be ",  "open" if is_right_hand_open else "closed")
 
