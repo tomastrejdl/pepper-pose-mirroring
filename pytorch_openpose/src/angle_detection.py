@@ -25,7 +25,9 @@ def get_body_angles(canvas, body_peaks, draw = True):
                 cv2.putText(canvas, str(int(angle)) + "deg", (int(x)-20, int(y)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
         else:
             angles.append(0)
-            
+    
+    if len(angles) < 4:
+        return [0, 0, 0, 0]
     return angles
 
 
