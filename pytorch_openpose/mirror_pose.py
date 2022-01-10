@@ -23,7 +23,7 @@ ip_address = "10.37.1.249"
 port = 9559
 
 robot = Pepper(ip_address, port)
-robot.autonomous_life_off()
+# robot.autonomous_life_off()
 robot.stand()
 
 # Subscribe to camera, 640x480, 30 FPS
@@ -37,6 +37,8 @@ while True:
     candidate, subset = body_estimation(oriImg)
     canvas = copy.deepcopy(oriImg)
     canvas, body_angles = util.draw_bodypose(canvas, candidate, subset)
+
+    robot.move_joint_by_angle(["LElbowYaw", "RElbowYaw"], [math.radians(-110), math.radians(110)], 0.4)
 
     # Call PepperController to move joints
     body_angles[0] -= 90
