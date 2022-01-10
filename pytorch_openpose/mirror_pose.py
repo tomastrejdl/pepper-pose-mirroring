@@ -41,7 +41,7 @@ while True:
     # Call PepperController to move joints
     body_angles_in_radians = [math.radians(x) for x in body_angles]
     robot.move_joint_by_angle(["LShoulderRoll", "LElbowRoll", "RShoulderRoll", "RElbowRoll"], body_angles_in_radians, 0.4)
-    print("Moving joints [LShoulderRoll, LElbowRoll, RShoulderRoll, RElbowRoll]: ", body_angles)
+    print("Moving joints [LShoulderRoll, LElbowRoll, RShoulderRoll, RElbowRoll]: ", body_angles_in_radians)
 
     hands_list = util.handDetect(candidate, subset, oriImg)
 
